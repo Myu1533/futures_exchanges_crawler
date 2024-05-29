@@ -11,8 +11,8 @@ db = database(dbName, COMPO, [key1, key2], engine="TSDB")
 
 ```SQL
 db = database("dfs://htzq_base")
-t = table(100:0, `instrumentId`exchange`openDate`expireDate`startDeliveryDate`endDeliveryDate`basisPrice`crawlerDate, [SYMBOL, STRING, DATE, DATE, DATE, DATE, DOUBLE, DATE])
-db.createPartitionedTable(t, `crawler_contract_info, `crawlerDate`instrumentId, sortColumns=`instrumentId`crawlerDate, keepDuplicates=LAST)
+t = table(100:0, `instrumentId`exchange`openDate`expireDate`startDeliveryDate`endDeliveryDate`basisPrice, [SYMBOL, STRING, DATE, DATE, DATE, DATE, DOUBLE])
+db.createPartitionedTable(t, `crawler_contract_info, `openDate`instrumentId, sortColumns=`instrumentId`openDate, keepDuplicates=LAST)
 ```
 
 ## 交易所合约参数对比
@@ -29,11 +29,13 @@ db.createPartitionedTable(t, `crawler_contract_info, `crawlerDate`instrumentId, 
 | 交易单位     | 1    | 0   | 0     | 1    | 1   | 0    |
 | 最小变动单位 | 1    | 0   | 0     | 1    | 1   | 0    |
 
-## 上期所合约参数 入库结构
+## 上期所合约参数 采集结构
 
-api: https://www.shfe.com.cn/data/busiparamdata/future/ContractBaseInfo20240527.dat
+接口: https://www.shfe.com.cn/data/busiparamdata/future/ContractBaseInfo20240527.dat （**注意文件名**）
 
-注意文件名
+方法：GET
+
+参数：rng 随机数
 
 | 变量名         | 类型   | 说明       |
 | -------------- | ------ | ---------- |
@@ -42,19 +44,55 @@ api: https://www.shfe.com.cn/data/busiparamdata/future/ContractBaseInfo20240527.
 | EXPIREDATE     | String | 到期日     |
 | STARTDELIVDATE | String | 开始交割日 |
 | ENDDELIVDATE   | String | 最后交割日 |
-| BASISPRICE     | String | 基准价     |
+| BASISPRICE     | Float  | 基准价     |
 
-## 能源所合约参数 入库结构
+## 能源所合约参数 采集结构
 
-api: https://www.ine.cn/data/instrument/ContractBaseInfo20240527.dat
+接口: https://www.ine.cn/data/instrument/ContractBaseInfo20240527.dat （**注意文件名**）
 
-注意文件名
+方法：GET
+
+参数：params 时间戳
 
 | 变量名         | 类型   | 说明       |
 | -------------- | ------ | ---------- |
-| BASISPRICE     | String | 基准价     |
-| ENDDELIVDATE   | String | 最后交割日 |
-| EXPIREDATE     | String | 到期日     |
 | INSTRUMENTID   | String | 合约代码   |
 | OPENDATE       | String | 上市日     |
+| EXPIREDATE     | String | 到期日     |
 | STARTDELIVDATE | String | 开始交割日 |
+| ENDDELIVDATE   | String | 最后交割日 |
+| BASISPRICE     | Float  | 基准价     |
+
+**ec 欧洲集运指数合约**，上期所和能源所都会发布信息，交易处于**能源所**， 采集的时候以**能源所**信息为主。
+
+## 广期所合约参数 采集结构
+
+接口: http://www.gfex.com.cn/u/interfacesWebTtQueryContractInfo/loadList
+
+方法：POST
+
+参数：formData([variety, trade_type])
+
+| 变量名           | 类型   | 说明       |
+| ---------------- | ------ | ---------- |
+| contractId       | String | 合约代码   |
+| startTradeDate   | String | 上市日     |
+| endTradeDate     | String | 到期日     |
+| endDeliveryDate0 | String | 最后交割日 |
+
+## 中金所合约参数 采集结构
+
+接口: http://www.cffex.com.cn/sj/jycs/202405/28/index.xml
+
+方法：GET
+
+参数：按日期区分数据，根据请求连接结构拼接
+
+| 变量名          | 类型   | 说明     |
+| --------------- | ------ | -------- |
+| INSTRUMENT_ID   | String | 合约代码 |
+| OPEN_DATE       | String | 上市日   |
+| END_TRADING_DAY | String | 到期日   |
+| BASIS_PRICE     | Float  | 基准价   |
+
+由于中金所一个接口提供期货期权的合约，**直接处理全量数据**

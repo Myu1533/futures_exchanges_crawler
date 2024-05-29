@@ -1,9 +1,7 @@
-import random
 import requests
 import datetime
 import pandas as pd
 from io import StringIO
-from utils import setupCrawlerDateSeries
 
 def fetchContractBaseInfo():
     url = (
@@ -35,7 +33,7 @@ def fetchContractBaseInfo():
     # format string to float
     df_result['BASISPRICE'] = pd.to_numeric(df_result['BASISPRICE'])
     # setup the crawler date
-    crawler_date_series = setupCrawlerDateSeries(len(df_result))
+    # crawler_date_series = setupCrawlerDateSeries(len(df_result))
   
     return pd.DataFrame({'instrumentId': df_result['INSTRUMENTID'], 
                           'exchange': 'SHFE',
@@ -44,5 +42,5 @@ def fetchContractBaseInfo():
                           'startDeliveryDate': df_result['STARTDELIVDATE'],
                           'endDeliveryDate': df_result['ENDDELIVDATE'],
                           'basisPrice': df_result['BASISPRICE'],
-                          'crawlerDate': crawler_date_series,
+                          'varietyType': 0,
                         })

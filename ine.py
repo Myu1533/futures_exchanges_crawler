@@ -3,7 +3,6 @@ import requests
 import datetime
 import pandas as pd
 from io import StringIO
-from utils import setupCrawlerDateSeries
 
 def fetchContractBaseInfo():
     url = (
@@ -33,7 +32,7 @@ def fetchContractBaseInfo():
     df_result['STARTDELIVDATE'] = pd.to_datetime(df_result['STARTDELIVDATE'], format='%Y%m%d')
     df_result['ENDDELIVDATE'] = pd.to_datetime(df_result['ENDDELIVDATE'], format='%Y%m%d')
     # setup the crawler date
-    crawler_date_series = setupCrawlerDateSeries(len(df_result))
+    # crawler_date_series = setupCrawlerDateSeries(len(df_result))
   
     return pd.DataFrame({'instrumentId': df_result['INSTRUMENTID'], 
                           'exchange': 'INE',
@@ -42,5 +41,5 @@ def fetchContractBaseInfo():
                           'startDeliveryDate': df_result['STARTDELIVDATE'],
                           'endDeliveryDate': df_result['ENDDELIVDATE'],
                           'basisPrice': df_result['BASISPRICE'],
-                          'crawlerDate': crawler_date_series,
+                          'varietyType': 0,
                         })
