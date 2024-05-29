@@ -4,9 +4,9 @@ import datetime
 import pandas as pd
 from io import StringIO
 
-def fetchContractBaseInfo():
-    url = (
-        "https://www.ine.cn/data/instrument/ContractBaseInfo"
+def handleINEContract(url, varietyType):
+    _url = (
+        url
         + datetime.date.today().strftime("%Y%m%d")
         + ".dat?rnd="
         + str(random.random())
@@ -19,11 +19,11 @@ def fetchContractBaseInfo():
         "Cache-Control": "max-age=0",
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0",
     }
-    res = requests.get(url, headers=header)
+    res = requests.get(_url, headers=header)
     res.close()
 
     json_result = pd.read_json(StringIO(res.text))
-    tmp = pd.array(json_result["ContractBaseInfo"])
+    tmp = pd.array(json_result["ContractBaseInfo" if varietyType == 0 else "OptionContractBaseInfo"])
     variables = list(tmp[0].keys())
     df_result = pd.DataFrame([[i[j] for j in variables] for i in tmp], columns=variables)
     # format string to date 
@@ -31,15 +31,20 @@ def fetchContractBaseInfo():
     df_result['EXPIREDATE'] = pd.to_datetime(df_result['EXPIREDATE'], format='%Y%m%d')
     df_result['STARTDELIVDATE'] = pd.to_datetime(df_result['STARTDELIVDATE'], format='%Y%m%d')
     df_result['ENDDELIVDATE'] = pd.to_datetime(df_result['ENDDELIVDATE'], format='%Y%m%d')
-    # setup the crawler date
-    # crawler_date_series = setupCrawlerDateSeries(len(df_result))
-  
+
     return pd.DataFrame({'instrumentId': df_result['INSTRUMENTID'], 
-                          'exchange': 'INE',
-                          'openDate': df_result['OPENDATE'],
-                          'expireDate': df_result['EXPIREDATE'],
-                          'startDeliveryDate': df_result['STARTDELIVDATE'],
-                          'endDeliveryDate': df_result['ENDDELIVDATE'],
-                          'basisPrice': df_result['BASISPRICE'],
-                          'varietyType': 0,
-                        })
+                        'exchange': 'INE',
+                        'openDate': df_result['OPENDATE'],
+                        'expireDate': df_result['EXPIREDATE'],
+                        'startDeliveryDate': df_result['STARTDELIVDATE'] if varietyType == 0 else None,
+                        'endDeliveryDate': df_result['ENDDELIVDATE'] if varietyType == 0 else None,
+                        'basisPrice': df_result['BASISPRICE'] if varietyType == 0 else None,
+                        'varietyType': varietyType,
+                    })
+
+
+def fetchContractBaseInfo():
+    futures_df = handleINEContract("https://www.ine.cn/data/instrument/ContractBaseInfo", 0)
+    option_df = handleINEContract("https://www.ine.cn/data/instrument/option/ContractBaseInfo", 1)
+    final_df = pd.concat([futures_df, option_df], ignore_index=True)
+    return pd.DataFrame(final_df, columns=['instrumentId', 'exchange', 'openDate', 'expireDate', 'startDeliveryDate', 'endDeliveryDate', 'basisPrice', 'varietyType'])

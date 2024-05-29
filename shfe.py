@@ -3,9 +3,9 @@ import datetime
 import pandas as pd
 from io import StringIO
 
-def fetchContractBaseInfo():
-    url = (
-        "https://www.shfe.com.cn/data/busiparamdata/future/ContractBaseInfo"
+def handleSHFEContract(url, varietyType):
+    _url = (
+        url
         + datetime.date.today().strftime("%Y%m%d")
         + ".dat?params="
         + str(datetime.datetime.now().timestamp())
@@ -18,7 +18,7 @@ def fetchContractBaseInfo():
         "Cache-Control": "max-age=0",
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0",
     }
-    res = requests.get(url, headers=header)
+    res = requests.get(_url, headers=header)
     res.close()
 
     json_result = pd.read_json(StringIO(res.text))
@@ -32,15 +32,20 @@ def fetchContractBaseInfo():
     df_result['ENDDELIVDATE'] = pd.to_datetime(df_result['ENDDELIVDATE'], format='%Y%m%d')
     # format string to float
     df_result['BASISPRICE'] = pd.to_numeric(df_result['BASISPRICE'])
-    # setup the crawler date
-    # crawler_date_series = setupCrawlerDateSeries(len(df_result))
-  
+
+    
     return pd.DataFrame({'instrumentId': df_result['INSTRUMENTID'], 
-                          'exchange': 'SHFE',
-                          'openDate': df_result['OPENDATE'],
-                          'expireDate': df_result['EXPIREDATE'],
-                          'startDeliveryDate': df_result['STARTDELIVDATE'],
-                          'endDeliveryDate': df_result['ENDDELIVDATE'],
-                          'basisPrice': df_result['BASISPRICE'],
-                          'varietyType': 0,
-                        })
+                        'exchange': 'SHFE',
+                        'openDate': df_result['OPENDATE'],
+                        'expireDate': df_result['EXPIREDATE'],
+                        'startDeliveryDate': df_result['STARTDELIVDATE'] if varietyType == 0 else None,
+                        'endDeliveryDate': df_result['ENDDELIVDATE'] if varietyType == 0 else None,
+                        'basisPrice': df_result['BASISPRICE'] if varietyType == 0 else None,
+                        'varietyType': varietyType,
+                    })
+
+def fetchContractBaseInfo():
+    futures_df = handleSHFEContract("https://www.shfe.com.cn/data/busiparamdata/future/ContractBaseInfo", 0)
+    option_df = handleSHFEContract("https://www.shfe.com.cn/data/busiparamdata/option/ContractBaseInfo", 1)
+    final_df = pd.concat([futures_df, option_df], ignore_index=True)
+    return pd.DataFrame(final_df, columns=['instrumentId', 'exchange', 'openDate', 'expireDate', 'startDeliveryDate', 'endDeliveryDate', 'basisPrice', 'varietyType'])
