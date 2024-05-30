@@ -65,6 +65,8 @@ db.createPartitionedTable(t, `crawler_contract_info, `openDate`instrumentId, sor
 
 **ec 欧洲集运指数合约**，上期所和能源所都会发布信息，交易处于**能源所**， 采集的时候以**能源所**信息为主。
 
+能源所期权信息中，交易所标记为**上期所**
+
 ## 广期所合约参数 采集结构
 
 接口: http://www.gfex.com.cn/u/interfacesWebTtQueryContractInfo/loadList
@@ -96,3 +98,18 @@ db.createPartitionedTable(t, `crawler_contract_info, `openDate`instrumentId, sor
 | BASIS_PRICE     | Float  | 基准价   |
 
 由于中金所一个接口提供期货期权的合约，**直接处理全量数据**
+
+## 大商所合约参数 采集结构
+
+接口: http://www.dce.com.cn/publicweb/businessguidelines/queryContractInfo.html
+
+方法：POST
+
+参数：formData([contractInformation.variety, contractInformation.trade_type])
+
+| 变量名     | 类型   | 说明       |
+| ---------- | ------ | ---------- |
+| 合约代码   | String | 合约代码   |
+| 开始交易日 | String | 上市日     |
+| 最后交易日 | String | 到期日     |
+| 最后交割日 | String | 最后交割日 |

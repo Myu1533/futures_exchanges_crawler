@@ -3,8 +3,6 @@ import pandas as pd
 from io import StringIO
 
 def handleGFEXContract(url, varietyType):
-    url = "http://www.gfex.com.cn/u/interfacesWebTtQueryContractInfo/loadList"
-
     header = {
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
         "Accept-Encoding": "gzip, deflate, br",
@@ -22,7 +20,8 @@ def handleGFEXContract(url, varietyType):
     # format string to date 
     df_result['startTradeDate'] = pd.to_datetime(df_result['startTradeDate'], format='%Y%m%d')
     df_result['endTradeDate'] = pd.to_datetime(df_result['endTradeDate'], format='%Y%m%d')
-    df_result['endDeliveryDate0'] = pd.to_datetime(df_result['endDeliveryDate0'], format='%Y%m%d')
+    if varietyType == 0:
+      df_result['endDeliveryDate0'] = pd.to_datetime(df_result['endDeliveryDate0'], format='%Y%m%d') if varietyType == 0 else None
 
     return pd.DataFrame({'instrumentId': df_result['contractId'], 
                         'exchange': 'GFEX',

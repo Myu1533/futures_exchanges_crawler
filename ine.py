@@ -29,8 +29,9 @@ def handleINEContract(url, varietyType):
     # format string to date 
     df_result['OPENDATE'] = pd.to_datetime(df_result['OPENDATE'], format='%Y%m%d')
     df_result['EXPIREDATE'] = pd.to_datetime(df_result['EXPIREDATE'], format='%Y%m%d')
-    df_result['STARTDELIVDATE'] = pd.to_datetime(df_result['STARTDELIVDATE'], format='%Y%m%d')
-    df_result['ENDDELIVDATE'] = pd.to_datetime(df_result['ENDDELIVDATE'], format='%Y%m%d')
+    if varietyType == 0:
+      df_result['STARTDELIVDATE'] = pd.to_datetime(df_result['STARTDELIVDATE'], format='%Y%m%d')
+      df_result['ENDDELIVDATE'] = pd.to_datetime(df_result['ENDDELIVDATE'], format='%Y%m%d')
 
     return pd.DataFrame({'instrumentId': df_result['INSTRUMENTID'], 
                         'exchange': 'INE',
