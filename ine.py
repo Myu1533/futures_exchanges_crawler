@@ -4,7 +4,7 @@ import datetime
 import pandas as pd
 from io import StringIO
 
-def handleINEContract(url, varietyType):
+def handleContract(url, varietyType):
     _url = (
         url
         + datetime.date.today().strftime("%Y%m%d")
@@ -30,8 +30,8 @@ def handleINEContract(url, varietyType):
     df_result['OPENDATE'] = pd.to_datetime(df_result['OPENDATE'], format='%Y%m%d')
     df_result['EXPIREDATE'] = pd.to_datetime(df_result['EXPIREDATE'], format='%Y%m%d')
     if varietyType == 0:
-      df_result['STARTDELIVDATE'] = pd.to_datetime(df_result['STARTDELIVDATE'], format='%Y%m%d')
-      df_result['ENDDELIVDATE'] = pd.to_datetime(df_result['ENDDELIVDATE'], format='%Y%m%d')
+        df_result['STARTDELIVDATE'] = pd.to_datetime(df_result['STARTDELIVDATE'], format='%Y%m%d')
+        df_result['ENDDELIVDATE'] = pd.to_datetime(df_result['ENDDELIVDATE'], format='%Y%m%d')
 
     return pd.DataFrame({'instrumentId': df_result['INSTRUMENTID'], 
                         'exchange': 'INE',
@@ -45,7 +45,7 @@ def handleINEContract(url, varietyType):
 
 
 def fetchContractBaseInfo():
-    futures_df = handleINEContract("https://www.ine.cn/data/instrument/ContractBaseInfo", 0)
-    option_df = handleINEContract("https://www.ine.cn/data/instrument/option/ContractBaseInfo", 1)
+    futures_df = handleContract("https://www.ine.cn/data/instrument/ContractBaseInfo", 0)
+    option_df = handleContract("https://www.ine.cn/data/instrument/option/ContractBaseInfo", 1)
     final_df = pd.concat([futures_df, option_df], ignore_index=True)
     return pd.DataFrame(final_df, columns=['instrumentId', 'exchange', 'openDate', 'expireDate', 'startDeliveryDate', 'endDeliveryDate', 'basisPrice', 'varietyType'])

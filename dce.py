@@ -2,7 +2,7 @@ import requests
 import pandas as pd
 from io import StringIO
 
-def handleDCEContract(url, varietyType):
+def handleContract(url, varietyType):
     header = {
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
         "Accept-Encoding": "gzip, deflate, br",
@@ -33,8 +33,8 @@ def handleDCEContract(url, varietyType):
                     })
 
 def fetchContractBaseInfo():
-    futures_df = handleDCEContract("http://www.dce.com.cn/publicweb/businessguidelines/queryContractInfo.html", 0)
-    option_df = handleDCEContract("http://www.dce.com.cn/publicweb/businessguidelines/queryContractInfo.html", 1)
+    futures_df = handleContract("http://www.dce.com.cn/publicweb/businessguidelines/queryContractInfo.html", 0)
+    option_df = handleContract("http://www.dce.com.cn/publicweb/businessguidelines/queryContractInfo.html", 1)
     final_df = pd.concat([futures_df, option_df], ignore_index=True)
     return pd.DataFrame(final_df, columns=['instrumentId', 'exchange', 'openDate', 'expireDate', 'startDeliveryDate', 'endDeliveryDate', 'basisPrice', 'varietyType'])
 

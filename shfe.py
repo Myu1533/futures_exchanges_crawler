@@ -3,7 +3,7 @@ import datetime
 import pandas as pd
 from io import StringIO
 
-def handleSHFEContract(url, varietyType):
+def handleContract(url, varietyType):
     _url = (
         url
         + datetime.date.today().strftime("%Y%m%d")
@@ -29,10 +29,10 @@ def handleSHFEContract(url, varietyType):
     df_result['OPENDATE'] = pd.to_datetime(df_result['OPENDATE'], format='%Y%m%d')
     df_result['EXPIREDATE'] = pd.to_datetime(df_result['EXPIREDATE'], format='%Y%m%d')
     if varietyType == 0:
-      df_result['STARTDELIVDATE'] = pd.to_datetime(df_result['STARTDELIVDATE'], format='%Y%m%d')
-      df_result['ENDDELIVDATE'] = pd.to_datetime(df_result['ENDDELIVDATE'], format='%Y%m%d')
-      # format string to float
-      df_result['BASISPRICE'] = pd.to_numeric(df_result['BASISPRICE'])
+        df_result['STARTDELIVDATE'] = pd.to_datetime(df_result['STARTDELIVDATE'], format='%Y%m%d')
+        df_result['ENDDELIVDATE'] = pd.to_datetime(df_result['ENDDELIVDATE'], format='%Y%m%d')
+        # format string to float
+        df_result['BASISPRICE'] = pd.to_numeric(df_result['BASISPRICE'])
 
     
     return pd.DataFrame({'instrumentId': df_result['INSTRUMENTID'], 
@@ -46,7 +46,7 @@ def handleSHFEContract(url, varietyType):
                     })
 
 def fetchContractBaseInfo():
-    futures_df = handleSHFEContract("https://www.shfe.com.cn/data/busiparamdata/future/ContractBaseInfo", 0)
-    option_df = handleSHFEContract("https://www.shfe.com.cn/data/busiparamdata/option/ContractBaseInfo", 1)
+    futures_df = handleContract("https://www.shfe.com.cn/data/busiparamdata/future/ContractBaseInfo", 0)
+    option_df = handleContract("https://www.shfe.com.cn/data/busiparamdata/option/ContractBaseInfo", 1)
     final_df = pd.concat([futures_df, option_df], ignore_index=True)
     return pd.DataFrame(final_df, columns=['instrumentId', 'exchange', 'openDate', 'expireDate', 'startDeliveryDate', 'endDeliveryDate', 'basisPrice', 'varietyType'])
