@@ -18,17 +18,17 @@ def handleContract(url, varietyType):
     variables = list(tmp[0].keys())
     df_result = pd.DataFrame([[i[j] for j in variables] for i in tmp], columns=variables)
     # format string to date 
-    df_result['startTradeDate'] = pd.to_datetime(df_result['startTradeDate'], format='%Y%m%d')
-    df_result['endTradeDate'] = pd.to_datetime(df_result['endTradeDate'], format='%Y%m%d')
+    df_result['startTradeDate'] = pd.to_datetime(df_result['startTradeDate'], format='%Y%m%d').asytype('datetime64[ns]')
+    df_result['endTradeDate'] = pd.to_datetime(df_result['endTradeDate'], format='%Y%m%d').asytype('datetime64[ns]')
     if varietyType == 0:
-        df_result['endDeliveryDate0'] = pd.to_datetime(df_result['endDeliveryDate0'], format='%Y%m%d') if varietyType == 0 else None
+        df_result['endDeliveryDate0'] = pd.to_datetime(df_result['endDeliveryDate0'], format='%Y%m%d').asytype('datetime64[ns]') if varietyType == 0 else pd.NaT
 
     return pd.DataFrame({'instrumentId': df_result['contractId'], 
                         'exchange': 'GFEX',
                         'openDate': df_result['startTradeDate'],
                         'expireDate': df_result['endTradeDate'],
-                        'startDeliveryDate': None,
-                        'endDeliveryDate': df_result['endDeliveryDate0'] if varietyType == 0 else None,
+                        'startDeliveryDate': pd.NaT,
+                        'endDeliveryDate': df_result['endDeliveryDate0'] if varietyType == 0 else pd.NaT,
                         'basisPrice': None,
                         'varietyType': varietyType,
                     })

@@ -15,23 +15,23 @@ def handleContract(url, varietyType):
     res.close()
 
     json_result = pd.read_xml(StringIO(res.text))
-    json_result["FrstTrdDt"] = json_result['FrstTrdDt'].replace("n.a.", None)
-    json_result["LstTrdDt"] = json_result['LstTrdDt'].replace("n.a.", None)
+    json_result["FrstTrdDt"] = json_result['FrstTrdDt'].replace("n.a.", pd.NaT)
+    json_result["LstTrdDt"] = json_result['LstTrdDt'].replace("n.a.", pd.NaT)
     if varietyType == 0:
-      json_result["LstDlvryDt"] = json_result['LstDlvryDt'].replace("n.a.", None)
+      json_result["LstDlvryDt"] = json_result['LstDlvryDt'].replace("n.a.", pd.NaT)
 
     # format string to date 
-    json_result['FrstTrdDt'] = pd.to_datetime(json_result['FrstTrdDt'], format='%Y-%m-%d')
-    json_result['LstTrdDt'] = pd.to_datetime(json_result['LstTrdDt'], format='%Y-%m-%d')
+    json_result['FrstTrdDt'] = pd.to_datetime(json_result['FrstTrdDt'], format='%Y-%m-%d').asytype('datetime64[ns]')
+    json_result['LstTrdDt'] = pd.to_datetime(json_result['LstTrdDt'], format='%Y-%m-%d').asytype('datetime64[ns]')
     if varietyType == 0:
-      json_result['LstDlvryDt'] = pd.to_datetime(json_result['LstDlvryDt'], format='%Y-%m-%d')
+      json_result['LstDlvryDt'] = pd.to_datetime(json_result['LstDlvryDt'], format='%Y-%m-%d').asytype('datetime64[ns]')
 
     return pd.DataFrame({'instrumentId': json_result['CtrCd'], 
                         'exchange': 'CZCE',
                         'openDate': json_result['FrstTrdDt'],
                         'expireDate': json_result['LstTrdDt'],
-                        'startDeliveryDate': None,
-                        'endDeliveryDate': json_result['LstDlvryDt'] if varietyType == 0 else None,
+                        'startDeliveryDate': pd.NaT,
+                        'endDeliveryDate': json_result['LstDlvryDt'] if varietyType == 0 else pd.NaT,
                         'basisPrice': None,
                         'varietyType': varietyType,
                     })

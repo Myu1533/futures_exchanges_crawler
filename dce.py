@@ -17,17 +17,17 @@ def handleContract(url, varietyType):
     
     json_result = json_result[0]
     # format string to date 
-    json_result['开始交易日'] = pd.to_datetime(json_result['开始交易日'], format='%Y%m%d')
-    json_result['最后交易日'] = pd.to_datetime(json_result['最后交易日'], format='%Y%m%d')
+    json_result['开始交易日'] = pd.to_datetime(json_result['开始交易日'], format='%Y%m%d').asytype('datetime64[ns]')
+    json_result['最后交易日'] = pd.to_datetime(json_result['最后交易日'], format='%Y%m%d').asytype('datetime64[ns]')
     if varietyType == 0:
-        json_result['最后交割日'] = pd.to_datetime(json_result['最后交割日'], format='%Y%m%d')
+        json_result['最后交割日'] = pd.to_datetime(json_result['最后交割日'], format='%Y%m%d').asytype('datetime64[ns]')
         
     return pd.DataFrame({'instrumentId': json_result['合约代码'], 
                         'exchange': 'DCE',
                         'openDate': json_result['开始交易日'],
                         'expireDate': json_result['最后交易日'],
-                        'startDeliveryDate': None,
-                        'endDeliveryDate': json_result['最后交割日'] if varietyType == 0 else None,
+                        'startDeliveryDate': pd.NaT,
+                        'endDeliveryDate': json_result['最后交割日'] if varietyType == 0 else pd.NaT,
                         'basisPrice': None,
                         'varietyType': varietyType,
                     })

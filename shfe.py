@@ -26,11 +26,11 @@ def handleContract(url, varietyType):
     variables = list(tmp[0].keys())
     df_result = pd.DataFrame([[i[j] for j in variables] for i in tmp], columns=variables)
     # format string to date 
-    df_result['OPENDATE'] = pd.to_datetime(df_result['OPENDATE'], format='%Y%m%d')
-    df_result['EXPIREDATE'] = pd.to_datetime(df_result['EXPIREDATE'], format='%Y%m%d')
+    df_result['OPENDATE'] = pd.to_datetime(df_result['OPENDATE'], format='%Y%m%d').asytype('datetime64[ns]')
+    df_result['EXPIREDATE'] = pd.to_datetime(df_result['EXPIREDATE'], format='%Y%m%d').asytype('datetime64[ns]')
     if varietyType == 0:
-        df_result['STARTDELIVDATE'] = pd.to_datetime(df_result['STARTDELIVDATE'], format='%Y%m%d')
-        df_result['ENDDELIVDATE'] = pd.to_datetime(df_result['ENDDELIVDATE'], format='%Y%m%d')
+        df_result['STARTDELIVDATE'] = pd.to_datetime(df_result['STARTDELIVDATE'], format='%Y%m%d').asytype('datetime64[ns]')
+        df_result['ENDDELIVDATE'] = pd.to_datetime(df_result['ENDDELIVDATE'], format='%Y%m%d').asytype('datetime64[ns]')
         # format string to float
         df_result['BASISPRICE'] = pd.to_numeric(df_result['BASISPRICE'])
 
@@ -39,8 +39,8 @@ def handleContract(url, varietyType):
                         'exchange': 'SHFE',
                         'openDate': df_result['OPENDATE'],
                         'expireDate': df_result['EXPIREDATE'],
-                        'startDeliveryDate': df_result['STARTDELIVDATE'] if varietyType == 0 else None,
-                        'endDeliveryDate': df_result['ENDDELIVDATE'] if varietyType == 0 else None,
+                        'startDeliveryDate': df_result['STARTDELIVDATE'] if varietyType == 0 else pd.NaT,
+                        'endDeliveryDate': df_result['ENDDELIVDATE'] if varietyType == 0 else pd.NaT,
                         'basisPrice': df_result['BASISPRICE'] if varietyType == 0 else None,
                         'varietyType': varietyType,
                     })

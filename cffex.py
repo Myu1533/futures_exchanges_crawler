@@ -29,14 +29,14 @@ def fetchContractBaseInfo():
   futures_filtered_result = xml_result[xml_result['INSTRUMENT_ID'].str.contains('-') == False]
   futures_filtered_result = futures_filtered_result.reset_index(drop=True)
   # format string to date 
-  futures_filtered_result['OPEN_DATE'] = pd.to_datetime(futures_filtered_result['OPEN_DATE'], format='%Y%m%d')
-  futures_filtered_result['END_TRADING_DAY'] = pd.to_datetime(futures_filtered_result['END_TRADING_DAY'], format='%Y%m%d')
+  futures_filtered_result['OPEN_DATE'] = pd.to_datetime(futures_filtered_result['OPEN_DATE'], format='%Y%m%d').asytype('datetime64[ns]')
+  futures_filtered_result['END_TRADING_DAY'] = pd.to_datetime(futures_filtered_result['END_TRADING_DAY'], format='%Y%m%d').asytype('datetime64[ns]')
   futures_df = pd.DataFrame({'instrumentId': futures_filtered_result['INSTRUMENT_ID'], 
                         'exchange': 'CFFEX',
                         'openDate': futures_filtered_result['OPEN_DATE'],
                         'expireDate': futures_filtered_result['END_TRADING_DAY'],
-                        'startDeliveryDate': None,
-                        'endDeliveryDate': None,
+                        'startDeliveryDate': pd.NaT,
+                        'endDeliveryDate': pd.NaT,
                         'basisPrice': futures_filtered_result['BASIS_PRICE'],
                         'varietyType': 0,
                       })
@@ -45,14 +45,14 @@ def fetchContractBaseInfo():
   option_filtered_result = xml_result[xml_result['INSTRUMENT_ID'].str.contains('-') == True]
   option_filtered_result = option_filtered_result.reset_index(drop=True)
   # format string to date
-  option_filtered_result['OPEN_DATE'] = pd.to_datetime(option_filtered_result['OPEN_DATE'], format='%Y%m%d')
-  option_filtered_result['END_TRADING_DAY'] = pd.to_datetime(option_filtered_result['END_TRADING_DAY'], format='%Y%m%d')
+  option_filtered_result['OPEN_DATE'] = pd.to_datetime(option_filtered_result['OPEN_DATE'], format='%Y%m%d').asytype('datetime64[ns]')
+  option_filtered_result['END_TRADING_DAY'] = pd.to_datetime(option_filtered_result['END_TRADING_DAY'], format='%Y%m%d').asytype('datetime64[ns]')
   option_df = pd.DataFrame({'instrumentId': option_filtered_result['INSTRUMENT_ID'], 
                         'exchange': 'CFFEX',
                         'openDate': option_filtered_result['OPEN_DATE'],
                         'expireDate': option_filtered_result['END_TRADING_DAY'],
-                        'startDeliveryDate': None,
-                        'endDeliveryDate': None,
+                        'startDeliveryDate': pd.NaT,
+                        'endDeliveryDate': pd.NaT,
                         'basisPrice': option_filtered_result['BASIS_PRICE'],
                         'varietyType': 1,
                       })
