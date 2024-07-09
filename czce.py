@@ -26,7 +26,7 @@ def handleContract(url, varietyType):
     if varietyType == 0:
       json_result['LstDlvryDt'] = pd.to_datetime(json_result['LstDlvryDt'], format='%Y-%m-%d').asytype('datetime64[ns]')
 
-    return pd.DataFrame({'instrumentId': json_result['CtrCd'], 
+    return pd.DataFrame({'instrumentId': json_result['CtrCd'].str.strip(), 
                         'exchange': 'CZCE',
                         'openDate': json_result['FrstTrdDt'],
                         'expireDate': json_result['LstTrdDt'],

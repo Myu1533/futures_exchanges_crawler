@@ -31,7 +31,7 @@ def fetchContractBaseInfo():
   # format string to date 
   futures_filtered_result['OPEN_DATE'] = pd.to_datetime(futures_filtered_result['OPEN_DATE'], format='%Y%m%d').asytype('datetime64[ns]')
   futures_filtered_result['END_TRADING_DAY'] = pd.to_datetime(futures_filtered_result['END_TRADING_DAY'], format='%Y%m%d').asytype('datetime64[ns]')
-  futures_df = pd.DataFrame({'instrumentId': futures_filtered_result['INSTRUMENT_ID'], 
+  futures_df = pd.DataFrame({'instrumentId': futures_filtered_result['INSTRUMENT_ID'].str.strip(), 
                         'exchange': 'CFFEX',
                         'openDate': futures_filtered_result['OPEN_DATE'],
                         'expireDate': futures_filtered_result['END_TRADING_DAY'],

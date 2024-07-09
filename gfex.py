@@ -23,7 +23,7 @@ def handleContract(url, varietyType):
     if varietyType == 0:
         df_result['endDeliveryDate0'] = pd.to_datetime(df_result['endDeliveryDate0'], format='%Y%m%d').asytype('datetime64[ns]') if varietyType == 0 else pd.NaT
 
-    return pd.DataFrame({'instrumentId': df_result['contractId'], 
+    return pd.DataFrame({'instrumentId': df_result['contractId'].str.strip(), 
                         'exchange': 'GFEX',
                         'openDate': df_result['startTradeDate'],
                         'expireDate': df_result['endTradeDate'],

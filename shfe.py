@@ -35,7 +35,7 @@ def handleContract(url, varietyType):
         df_result['BASISPRICE'] = pd.to_numeric(df_result['BASISPRICE'])
 
     
-    return pd.DataFrame({'instrumentId': df_result['INSTRUMENTID'], 
+    return pd.DataFrame({'instrumentId': df_result['INSTRUMENTID'].str.strip(), 
                         'exchange': 'SHFE',
                         'openDate': df_result['OPENDATE'],
                         'expireDate': df_result['EXPIREDATE'],

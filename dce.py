@@ -22,7 +22,7 @@ def handleContract(url, varietyType):
     if varietyType == 0:
         json_result['最后交割日'] = pd.to_datetime(json_result['最后交割日'], format='%Y%m%d').asytype('datetime64[ns]')
         
-    return pd.DataFrame({'instrumentId': json_result['合约代码'], 
+    return pd.DataFrame({'instrumentId': json_result['合约代码'].str.strip(), 
                         'exchange': 'DCE',
                         'openDate': json_result['开始交易日'],
                         'expireDate': json_result['最后交易日'],

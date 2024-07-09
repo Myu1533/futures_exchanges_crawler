@@ -33,7 +33,7 @@ def handleContract(url, varietyType):
         df_result['STARTDELIVDATE'] = pd.to_datetime(df_result['STARTDELIVDATE'], format='%Y%m%d').asytype('datetime64[ns]')
         df_result['ENDDELIVDATE'] = pd.to_datetime(df_result['ENDDELIVDATE'], format='%Y%m%d').asytype('datetime64[ns]')
 
-    return pd.DataFrame({'instrumentId': df_result['INSTRUMENTID'], 
+    return pd.DataFrame({'instrumentId': df_result['INSTRUMENTID'].str.strip(), 
                         'exchange': 'INE',
                         'openDate': df_result['OPENDATE'],
                         'expireDate': df_result['EXPIREDATE'],

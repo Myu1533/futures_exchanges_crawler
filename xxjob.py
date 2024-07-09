@@ -35,7 +35,7 @@ def cffex():
     # format string to date 
     futures_filtered_result['OPEN_DATE'] = pd.to_datetime(futures_filtered_result['OPEN_DATE'], format='%Y%m%d').astype('datetime64[ns]')
     futures_filtered_result['END_TRADING_DAY'] = pd.to_datetime(futures_filtered_result['END_TRADING_DAY'], format='%Y%m%d').astype('datetime64[ns]')
-    futures_df = pd.DataFrame({'instrumentId': futures_filtered_result['INSTRUMENT_ID'], 
+    futures_df = pd.DataFrame({'instrumentId': futures_filtered_result['INSTRUMENT_ID'].str.strip(), 
                             'exchange': 'CFFEX',
                             'openDate': futures_filtered_result['OPEN_DATE'],
                             'expireDate': futures_filtered_result['END_TRADING_DAY'],
@@ -51,7 +51,7 @@ def cffex():
     # format string to date
     option_filtered_result['OPEN_DATE'] = pd.to_datetime(option_filtered_result['OPEN_DATE'], format='%Y%m%d').astype('datetime64[ns]')
     option_filtered_result['END_TRADING_DAY'] = pd.to_datetime(option_filtered_result['END_TRADING_DAY'], format='%Y%m%d').astype('datetime64[ns]')
-    option_df = pd.DataFrame({'instrumentId': option_filtered_result['INSTRUMENT_ID'], 
+    option_df = pd.DataFrame({'instrumentId': option_filtered_result['INSTRUMENT_ID'].str.strip(), 
                             'exchange': 'CFFEX',
                             'openDate': option_filtered_result['OPEN_DATE'],
                             'expireDate': option_filtered_result['END_TRADING_DAY'],
@@ -80,7 +80,7 @@ def czce(url, varietyType):
     if varietyType == 0:
         json_result['LstDlvryDt'] = json_result['LstDlvryDt'].astype('datetime64[ns]')
 
-    return pd.DataFrame({'instrumentId': json_result['CtrCd'], 
+    return pd.DataFrame({'instrumentId': json_result['CtrCd'].str.strip(), 
                         'exchange': 'CZCE',
                         'openDate': json_result['FrstTrdDt'],
                         'expireDate': json_result['LstTrdDt'],
@@ -104,7 +104,7 @@ def dce(url, varietyType):
     if varietyType == 0:
         json_result['最后交割日'] = pd.to_datetime(json_result['最后交割日'], format='%Y%m%d').astype('datetime64[ns]')
         
-    return pd.DataFrame({'instrumentId': json_result['合约代码'], 
+    return pd.DataFrame({'instrumentId': json_result['合约代码'].str.strip(), 
                         'exchange': 'DCE',
                         'openDate': json_result['开始交易日'],
                         'expireDate': json_result['最后交易日'],
@@ -130,7 +130,7 @@ def gfex(url, varietyType):
     if varietyType == 0:
         df_result['endDeliveryDate0'] = df_result['endDeliveryDate0'].astype('datetime64[ns]')
 
-    return pd.DataFrame({'instrumentId': df_result['contractId'], 
+    return pd.DataFrame({'instrumentId': df_result['contractId'].str.strip(), 
                         'exchange': 'GFEX',
                         'openDate': df_result['startTradeDate'],
                         'expireDate': df_result['endTradeDate'],
@@ -163,7 +163,7 @@ def ine(url, varietyType):
         df_result['STARTDELIVDATE'] = df_result['STARTDELIVDATE'].astype('datetime64[ns]')
         df_result['ENDDELIVDATE'] = df_result['ENDDELIVDATE'].astype('datetime64[ns]')
 
-    return pd.DataFrame({'instrumentId': df_result['INSTRUMENTID'], 
+    return pd.DataFrame({'instrumentId': df_result['INSTRUMENTID'].str.strip(), 
                         'exchange': 'INE',
                         'openDate': df_result['OPENDATE'],
                         'expireDate': df_result['EXPIREDATE'],
@@ -198,7 +198,7 @@ def shfe(url, varietyType):
         # format string to float
         df_result['BASISPRICE'] = pd.to_numeric(df_result['BASISPRICE'])
     
-    return pd.DataFrame({'instrumentId': df_result['INSTRUMENTID'], 
+    return pd.DataFrame({'instrumentId': df_result['INSTRUMENTID'].str.strip(), 
                         'exchange': 'SHFE',
                         'openDate': df_result['OPENDATE'],
                         'expireDate': df_result['EXPIREDATE'],
