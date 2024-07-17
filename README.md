@@ -9,9 +9,9 @@ db = database(dbName, COMPO, [key1, key2], engine="TSDB")
 
 ## 建表
 
-```SQL
+```shell
 db = database("dfs://htzq_base")
-t = table(100:0, `instrumentId`exchange`openDate`expireDate`startDeliveryDate`endDeliveryDate`basisPrice, [SYMBOL, STRING, DATE, DATE, DATE, DATE, DOUBLE])
+t = table(100:0, `instrumentId`exchange`openDate`expireDate`startDeliveryDate`endDeliveryDate`basisPrice`varietyType, [SYMBOL, STRING, DATE, DATE, DATE, DATE, DOUBLE, INT])
 db.createPartitionedTable(t, `crawler_contract_info, `openDate`instrumentId, sortColumns=`instrumentId`openDate, keepDuplicates=LAST)
 ```
 
