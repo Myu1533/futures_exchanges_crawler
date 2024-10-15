@@ -209,7 +209,7 @@ def shfe(url, varietyType):
                     })
 
 if __name__ == "__main__":
-    ddb_pool = ddb.DBConnectionPool("192.168.56.105", 8902, 3, "admin", "123456")
+    ddb_pool = ddb.DBConnectionPool("192.168.56.103", 8902, 3, "admin", "123456")
 
     append_handler = ddb.PartitionedTableAppender(dbPath = "dfs://htzq_base", tableName = "crawler_contract_info", partitionColName = "instrumentId", dbConnectionPool = ddb_pool)
 

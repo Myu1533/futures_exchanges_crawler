@@ -1,0 +1,3 @@
+db = database("dfs://htzq_base")
+t = table(100:0, `instrumentId`exchange`openDate`expireDate`startDeliveryDate`endDeliveryDate`basisPrice`varietyType, [SYMBOL, STRING, DATE, DATE, DATE, DATE, DOUBLE, INT])
+db.createPartitionedTable(t, `crawler_contract_info, `openDate`instrumentId, sortColumns=`instrumentId`openDate, keepDuplicates=LAST)
